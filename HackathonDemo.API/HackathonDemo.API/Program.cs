@@ -36,11 +36,14 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
-app.MapGroup("/api/v1")
-    .MapQWeatherApi();
+//app.UseHttpsRedirection();
+//app.MapGroup("/api/v1")
+//    .MapQWeatherApi();
 
 app.MapGroup("/api/v1")
     .MapFaceRecognitionApi();
+
+app.MapGroup("/api/v1")
+    .MapVoiceRecognitionApi();
 
 app.Run();
