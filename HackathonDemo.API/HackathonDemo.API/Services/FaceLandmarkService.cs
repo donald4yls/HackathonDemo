@@ -11,7 +11,7 @@ namespace HackathonDemo.API.Services
         public FaceLandmarkService()
         {
             fd = Dlib.GetFrontalFaceDetector();
-            sp = ShapePredictor.Deserialize(@"AI_Model\shape_predictor_68_face_landmarks.dat");
+            sp = ShapePredictor.Deserialize(@"shape_predictor_68_face_landmarks.dat");
         }
 
         public FaceLandmarkResponse detect_landmark(string path)
