@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="AI_Model\shape_predictor_68_face_landmarks.dat">
+	  <None Update="shape_predictor_68_face_landmarks.dat">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
