@@ -36,6 +36,30 @@ namespace HackathonDemo.API.ApiDomains
                 .Produces(StatusCodes.Status400BadRequest)
                 .WithName("drowsyCheck");
 
+
+            group.MapPost("/drowsyCheckPostman", async (IFaceLandmarkService faceLandmarkService, IFormFile file) =>
+            {
+                if (file == null)
+                {
+                    throw new ArgumentNullException(nameof(file));
+                }
+
+                var fileName = file.FileName;
+                var fileExtension = fileName.Split('.').Last();
+                string tempfile = CreateTempfilePath(fileExtension);
+                using (var stream = File.OpenWrite(tempfile))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var drowsyCheck = faceLandmarkService.detect_landmark(tempfile, saveResult: true);
+
+                return TypedResults.Ok(drowsyCheck);
+            })
+               .Produces<FaceLandmarkResponse>(StatusCodes.Status200OK)
+               .Produces(StatusCodes.Status400BadRequest)
+               .WithName("drowsyCheckPostman");
+
             group.MapGet("/{imgName}", Results<FileContentHttpResult, NotFound> ([FromQuery] string imgPath) => {
 
                 if(!File.Exists(imgPath))

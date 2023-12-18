@@ -14,7 +14,7 @@ namespace HackathonDemo.API.Services
             sp = ShapePredictor.Deserialize(@"shape_predictor_68_face_landmarks.dat");
         }
 
-        public FaceLandmarkResponse detect_landmark(string path)
+        public FaceLandmarkResponse detect_landmark(string path, bool saveResult = false)
         {
             if (!File.Exists(path))
             {
@@ -40,20 +40,24 @@ namespace HackathonDemo.API.Services
 
                     Console.WriteLine(shape.ToString());
 
-                    //Draing Lines On the Eyes' Co-ordinates
-                    Dlib.DrawLine(img, shape.GetPart(36), shape.GetPart(37), new RgbPixel(255, 0, 0));
-                    Dlib.DrawLine(img, shape.GetPart(37), shape.GetPart(38), new RgbPixel(255, 0, 0));
-                    Dlib.DrawLine(img, shape.GetPart(38), shape.GetPart(39), new RgbPixel(255, 0, 0));
-                    Dlib.DrawLine(img, shape.GetPart(39), shape.GetPart(40), new RgbPixel(255, 0, 0));
-                    Dlib.DrawLine(img, shape.GetPart(40), shape.GetPart(41), new RgbPixel(255, 0, 0));
-                    Dlib.DrawLine(img, shape.GetPart(41), shape.GetPart(36), new RgbPixel(255, 0, 0));
+                    if (saveResult)
+                    {
+                        //Draing Lines On the Eyes' Co-ordinates
+                        Dlib.DrawLine(img, shape.GetPart(36), shape.GetPart(37), new RgbPixel(255, 0, 0));
+                        Dlib.DrawLine(img, shape.GetPart(37), shape.GetPart(38), new RgbPixel(255, 0, 0));
+                        Dlib.DrawLine(img, shape.GetPart(38), shape.GetPart(39), new RgbPixel(255, 0, 0));
+                        Dlib.DrawLine(img, shape.GetPart(39), shape.GetPart(40), new RgbPixel(255, 0, 0));
+                        Dlib.DrawLine(img, shape.GetPart(40), shape.GetPart(41), new RgbPixel(255, 0, 0));
+                        Dlib.DrawLine(img, shape.GetPart(41), shape.GetPart(36), new RgbPixel(255, 0, 0));
 
-                    Dlib.DrawLine(img, shape.GetPart(42), shape.GetPart(43), new RgbPixel(0, 255, 0));
-                    Dlib.DrawLine(img, shape.GetPart(43), shape.GetPart(44), new RgbPixel(0, 255, 0));
-                    Dlib.DrawLine(img, shape.GetPart(44), shape.GetPart(45), new RgbPixel(0, 255, 0));
-                    Dlib.DrawLine(img, shape.GetPart(45), shape.GetPart(46), new RgbPixel(0, 255, 0));
-                    Dlib.DrawLine(img, shape.GetPart(46), shape.GetPart(47), new RgbPixel(0, 255, 0));
-                    Dlib.DrawLine(img, shape.GetPart(47), shape.GetPart(42), new RgbPixel(0, 255, 0));
+                        Dlib.DrawLine(img, shape.GetPart(42), shape.GetPart(43), new RgbPixel(0, 255, 0));
+                        Dlib.DrawLine(img, shape.GetPart(43), shape.GetPart(44), new RgbPixel(0, 255, 0));
+                        Dlib.DrawLine(img, shape.GetPart(44), shape.GetPart(45), new RgbPixel(0, 255, 0));
+                        Dlib.DrawLine(img, shape.GetPart(45), shape.GetPart(46), new RgbPixel(0, 255, 0));
+                        Dlib.DrawLine(img, shape.GetPart(46), shape.GetPart(47), new RgbPixel(0, 255, 0));
+                        Dlib.DrawLine(img, shape.GetPart(47), shape.GetPart(42), new RgbPixel(0, 255, 0));
+                    }
+
                     for (var j = 36; j <= 47; j++)
                     {
                         var point = shape.GetPart((uint)j);
@@ -74,7 +78,6 @@ namespace HackathonDemo.API.Services
 
                     }
 
-
                     //Getting Eye Aspect Ratio And Beeping
                     if (eye_aspect_ratio(location) < .20)
                     {
@@ -82,8 +85,17 @@ namespace HackathonDemo.API.Services
                     }
                 }
 
-                string markedImgPath = basePath + @"temp\marked\" + DateTime.Now.Ticks + ".png";
-                Dlib.SavePng(img, markedImgPath);
+                string markedImgPath = string.Empty;
+                if (saveResult)
+                {
+                    var directoryPath = Path.Combine("temp", "marked");
+                    if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+
+                    string markedImgFileName = DateTime.Now.Ticks + ".png";
+                    markedImgPath = Path.Combine(directoryPath, markedImgFileName);
+                    Dlib.SavePng(img, markedImgPath);
+                }
+                
                 return new FaceLandmarkResponse(isDrowsy, markedImgPath);
             }
             catch (Exception e)
@@ -113,6 +125,6 @@ namespace HackathonDemo.API.Services
 
     public interface IFaceLandmarkService
     {
-        FaceLandmarkResponse detect_landmark(string path);
+        FaceLandmarkResponse detect_landmark(string path, bool saveResult = false);
     }
 }
